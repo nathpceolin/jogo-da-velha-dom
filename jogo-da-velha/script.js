@@ -12,15 +12,33 @@ const combinacoes =[
 
 const grid = document.querySelector('.grid');
 const player = document.getElementById('player');
+let changeTurn = true;
 
 const createCells = () => {
   for (let index = 0; index < 9; index += 1) {
     const elem = document.createElement('div');
-
     elem.className = 'celula';
     elem.id = index;
+    elem.addEventListener('click', play);
     grid.appendChild(elem);
   }
+}
+
+const play = (event) => {
+  let turn = '';
+  if(changeTurn){
+    player.innerHTML = 'Vez do jogador O';
+    turn = 'X';
+  }else{
+    player.innerHTML = 'Vez do jogador X';
+    turn = 'O';
+  }
+
+  changeTurn = !changeTurn;
+
+  event.target.innerHTML = turn;
+
+  checkWinner(turn);
 }
 
 const checkWinner = (turnPlayer) => {
@@ -35,6 +53,8 @@ const checkWinner = (turnPlayer) => {
 
       if (hits >= 3) {
         player.innerHTML = `Jogador ${turnPlayer} ganhou!`;
+      } else {
+        checkDraw();
       }
     }
   }
@@ -42,11 +62,26 @@ const checkWinner = (turnPlayer) => {
 
 createCells();
 
-grid.children[0].innerHTML = 'X';
-grid.children[8].innerHTML = 'O';
-grid.children[3].innerHTML = 'X';
-grid.children[7].innerHTML = 'O';
-grid.children[6].innerHTML = 'X';
+const btnReset = document.querySelector('#reset');
+btnReset.addEventListener('click', () => {
+  const cells = document.querySelectorAll('.celula');
+  for(let cell of cells ){
+    cell.innerHTML = '';
+  }
+})
 
+const checkDraw = () => {
+  let count = 0;
 
-checkWinner('X');
+  const cells = document.querySelectorAll('.celula');
+  for(let cell of cells ){
+
+    if(cell.innerHTML !== ''){
+      count += 1;
+      if(count >= cells.length){
+        player.innerHTML = 'Empatou!!';
+      }
+
+    }
+  }
+}
